@@ -1,44 +1,72 @@
-import { useState, useContext } from "react";
+import { useState } from "react";
 import axios from "axios";
-import "./SignIn.css"
-// import AuthContext from "../server/Auth";
+import "./SignIn.css";
+import Navbar from "../Navbar/Navbar";
+import { useNavigate } from "react-router-dom";
 
 const SignIn = () => {
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-    const [register, setRegister] = useState(true);
-    // const { dispatch } = useContext(AuthContext);
-  
-    const submitHandler = (e) => {
-      e.preventDefault();
-      let body = { username, password };
+  const navigate = useNavigate();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [register, setRegister] = useState(true);
+
+  const submitHandler = (e) => {
+    e.preventDefault();
+    let body = { username, password };
+    if (register) {
       axios
-        .post(register ? "/register" : "/login", body)
+        .post("http://localhost:4000/signin", body)
         .then((res) => {
-          // dispatch({ type: "LOGIN", payload: res.data });
+          console.log(res.data);
+          sessionStorage.setItem("username", res.data.username);
+          sessionStorage.setItem("id", res.data.id);
+          navigate('/');
         })
         .catch((err) => {
-          if(err.response.data) {
-            alert(err.response.data)
-          }
+          alert(err);
           console.error(err);
         });
+      } else {
+        axios
+          .post("http://localhost:4000/register", body)
+          .then((res) => {
+            console.log(res.data);
+          })
+          .catch((err) => {
+            if (err.response.data) {
+              alert(err.response.data);
+            }
+            console.error(err);
+          });
+      }
       console.log("submitHandler called");
     };
-  
-    return (
+
+  return (
+    <div>
+      <Navbar />
       <main className="signin">
         <h1>Welcome!</h1>
         <form className="form auth-form" onSubmit={submitHandler}>
-          <input className="form-input" placeholder="Username" onChange={(e) => setUsername(e.target.value)} />
-          <input className="form-input" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
-          <button className="form-btn">{register ? "Sign Up" : "Login"}</button>
+          <input
+            className="form-input"
+            placeholder="Username"
+            onChange={(e) => setUsername(e.target.value)}
+          />
+          <input
+            className="form-input"
+            placeholder="Password"
+            type="password"
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <button className="form-btn">{register ? "Login" : "Sign Up"}</button>
         </form>
         <button className="form-btn" onClick={() => setRegister(!register)}>
-          Need to {register ? "Login" : "Sign Up"}?
+          Need to {register ? "Sign Up" : "Login"}?
         </button>
       </main>
-    );
-  };
+    </div>
+  );
+};
 
 export default SignIn;

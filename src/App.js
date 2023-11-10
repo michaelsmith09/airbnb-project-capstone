@@ -1,15 +1,15 @@
 import './App.css';
 import { Routes, Route } from 'react-router-dom'
-import Navbar from './components/Navbar/Navbar';
 import SignIn from './components/SignIn/SignIn';
 import Home from './components/Home/Home';
+import Favorite from './components/Favorite/Favorite';
 
 function App() {
   return (
     <div className="App">
-      <Navbar/>
       <Routes>
         <Route path='/' element={<Home />}/>
+        <Route path='/Favorite' element={<Favorite />}/>
         <Route path='/SignIn' element= { <SignIn/> }/>
       </Routes>
     </div>
